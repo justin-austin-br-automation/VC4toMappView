@@ -1,0 +1,3 @@
+VAR
+	Boo : BOOL;
+END_VAR

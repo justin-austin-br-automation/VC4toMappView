@@ -17,11 +17,13 @@
     <Object Type="Package">mappView</Object>
     <Object Type="Package">mappVision</Object>
     <Object Type="Package">mappCockpit</Object>
+    <Object Type="Package">VC</Object>
   </Objects>
   <Configuration ModuleId="PC_any">
     <AutomationRuntime Version="D4.92" />
     <Build GccVersion="4.1.2" />
     <DefaultTargetMemory Tasks="UserROM" />
+    <Transfer SavedOfflineInstallationFolder="" SavedPipDestinationFolder="" SavedRuntimeUtilityCenterPackagePath="" />
     <Vc FirmwareVersion="V4.72.5" />
   </Configuration>
 </Cpu>
