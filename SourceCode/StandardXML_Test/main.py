@@ -2,22 +2,13 @@ import xml.etree.ElementTree as ET
 
 ET.register_namespace('ldef', "http://www.br-automation.com/iat2015/layoutDefinition/v2")
 ET.register_namespace('', "http://www.br-automation.com/iat2015/contentDefinition/v2")
-# ET.register_namespace('xsi', "http://www.w3.org/2001/XMLSchema-instance")
+ET.register_namespace('pdef', "http://www.br-automation.com/iat2015/pageDefinition/v2")
 
 # grab the tree from the xml doc
 tree = ET.parse('TemplateLayout.layout')
 
 # get the root of the tree
 root = tree.getroot()
-#print(f"The root of this tree is: {root.tag}")
-
-#print()
-
-# show all tags in the tree
-#print("All tags in the tree:")
-#print([elem.tag for elem in root.iter()])
-
-#print()
 
 # setting variables that would be pulled from VC4 info
 height = "600"
@@ -29,9 +20,8 @@ root.set('height', height)
 root.set('width', width)
 
 # loop through all the children of the Areas tag
-for item in root.find('Areas'):
-    item.set('height', height)
-    item.set('width', width)
+root[0][0].set('height', height)
+root[0][0].set('width', width)
 
 tree.write('ManTest.layout', xml_declaration=True, encoding='utf-8')
 
@@ -46,15 +36,6 @@ tree = ET.parse('TemplateContent.content')
 
 # get the root of the tree
 root = tree.getroot()
-print(f"The root of this tree is: {root.tag}")
-
-print()
-
-# show all tags in the tree
-print("All tags in the tree:")
-print([elem.tag for elem in root.iter()])
-
-print()
 
 # setting variables that would be pulled from VC4 info
 height = "600"
@@ -82,9 +63,6 @@ widget.set('left', "20")
 widget.set('zIndex', "1")
 widget.set('text', "Button")
 
-print("All tags in the tree:")
-print([elem.tag for elem in root.iter()])
-
 root.set('xmlns:xsi', "http://www.w3.org/2001/XMLSchema-instance")
 
 tree.write('ManTest.content', xml_declaration=True, encoding='utf-8')
@@ -100,3 +78,25 @@ filedata = filedata.replace(textToFind, textToReplaceWith)
 
 with open('ManTest.content', 'w') as file:
     file.write(filedata)
+
+
+
+
+# making the page file
+
+# grab the tree from the xml doc
+tree = ET.parse('TemplatePage.page')
+
+# get the root of the tree
+root = tree.getroot()
+
+# setting variables that would be pulled from VC4 info
+pageId = "pageManTest"
+
+root.set('id', pageId)
+root.set('layoutRefId', layoutId)
+
+# set all Assignment values
+root[0][0].set('baseContentRefId', contentId)
+
+tree.write('ManTest.page', xml_declaration=True, encoding='utf-8')
