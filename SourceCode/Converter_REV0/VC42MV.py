@@ -8,9 +8,9 @@ class VC4Page:
         
         self.path = path
         self.pageData, self.controlElements = getInfoFromVC4Page(self.path)
-        print(self.pageData)
-        print()
-        print(self.controlElements)
+        self.mVLayoutID = self.pageData['PageName'] + "Layout"
+        self.mVContentID = self.pageData['PageName'] + "Content"
+        self.mVPageID = self.pageData['PageName'] + "Page"
         
 
     def createMVLayout(self):
@@ -22,42 +22,36 @@ class VC4Page:
         # get the root of the tree
         root = tree.getroot()
 
-        # setting variables that would be pulled from VC4 info
-        height = self.pageData['Height']
-        width = self.pageData['Width']
-        self.layoutId = "layout1"
+        # set layout resolution and name
+        root.set('height', self.pageData['Height'])
+        root.set('width', self.pageData['Width'])
+        root.set('id', self.mVLayoutID)
 
-        root.set('height', height)
-        root.set('width', width)
-        root.set('id', self.layoutId)
+        # Set area sizes
+        root[0][0].set('height', self.pageData['Height'])
+        root[0][0].set('width', self.pageData['Width'])
 
-        # loop through all the children of the Areas tag
-        root[0][0].set('height', height)
-        root[0][0].set('width', width)
-
-        tree.write('layout1.layout', xml_declaration=True, encoding='utf-8')
+        tree.write(self.mVLayoutID + '.layout', xml_declaration=True, encoding='utf-8')
 
     def createMVContent(self):
-        pass
-        # ET.register_namespace('', "http://www.br-automation.com/iat2015/contentDefinition/v2")
-        # ET.register_namespace('pdef', "http://www.br-automation.com/iat2015/pageDefinition/v2")
+        ET.register_namespace('', "http://www.br-automation.com/iat2015/contentDefinition/v2")
+        ET.register_namespace('pdef', "http://www.br-automation.com/iat2015/pageDefinition/v2")
         
-        # # grab the tree from the xml doc
-        # tree = ET.parse('TemplateContent.content')
+        # grab the tree from the xml doc
+        tree = ET.parse('TemplateContent.content')
 
-        # # get the root of the tree
-        # root = tree.getroot()
+        # get the root of the tree
+        root = tree.getroot()
 
-        # # setting variables that would be pulled from VC4 info
-        # height = "600"
-        # width = "800"
-        # contentId = "content1"
+        # set content ratio and name
+        root.set('height', self.pageData['Height'])
+        root.set('width', self.pageData['Width'])
+        root.set('id', self.mVContentID)
 
-        # root.set('id', contentId)
-        # root.set('height', height)
-        # root.set('width', width)
+        # add in any widgets
+        for widget in self.controlElements:
+            pass
 
-        # # add in any widgets
         # widget = ET.SubElement(root[0], 'Widget')
         # widget.set('xsi:type', "widgets.brease.Label")
         # widget.set('id', "Label")
@@ -74,37 +68,34 @@ class VC4Page:
         # widget.set('zIndex', "1")
         # widget.set('text', "Button")
 
-        # root.set('xmlns:xsi', "http://www.w3.org/2001/XMLSchema-instance")
+        root.set('xmlns:xsi', "http://www.w3.org/2001/XMLSchema-instance")
 
-        # tree.write('content1.content', xml_declaration=True, encoding='utf-8')
+        tree.write(self.mVContentID + '.content', xml_declaration=True, encoding='utf-8')
 
-        # # editing output file to be usable by AS
-        # textToFind = "/><"
-        # textToReplaceWith = "/>\n<"
+        # editing output file to be usable by AS
+        textToFind = "/><"
+        textToReplaceWith = "/>\n<"
 
-        # with open('ManTest.content', 'r') as file:
-        #     filedata = file.read()
+        with open(self.mVContentID + '.content', 'r') as file:
+            filedata = file.read()
 
-        # filedata = filedata.replace(textToFind, textToReplaceWith)
+        filedata = filedata.replace(textToFind, textToReplaceWith)
 
-        # with open('ManTest.content', 'w') as file:
-        #     file.write(filedata)
+        with open(self.mVContentID + '.content', 'w') as file:
+            file.write(filedata)
 
     def createMVPage(self):
-        # # grab the tree from the xml doc
-        # tree = ET.parse('TemplatePage.page')
+        # grab the tree from the xml doc
+        tree = ET.parse('TemplatePage.page')
 
-        # # get the root of the tree
-        # root = tree.getroot()
+        # get the root of the tree
+        root = tree.getroot()
 
-        # # setting variables that would be pulled from VC4 info
-        # pageId = "pageManTest"
+        # set page name and layout
+        root.set('id', self.mVPageID)
+        root.set('layoutRefId', self.mVLayoutID)
 
-        # root.set('id', pageId)
-        # root.set('layoutRefId', layoutId)
+        # set all Assignment values
+        root[0][0].set('baseContentRefId', self.mVContentID)
 
-        # # set all Assignment values
-        # root[0][0].set('baseContentRefId', contentId)
-
-        # tree.write('ManTest.page', xml_declaration=True, encoding='utf-8')
-        pass
+        tree.write(self.mVPageID + '.page', xml_declaration=True, encoding='utf-8')
