@@ -9,7 +9,6 @@ class VC4Page:
         self.path = path
         self.pageData, self.controlElements = getInfoFromVC4Page(self.path)
         
-        
 
     def createMVLayout(self):
         pass
