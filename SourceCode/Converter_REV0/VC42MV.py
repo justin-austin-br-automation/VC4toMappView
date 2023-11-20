@@ -12,7 +12,6 @@ class VC4Page:
         print()
         print(self.controlElements)
         
-        
 
     def createMVLayout(self):
         ET.register_namespace('ldef', "http://www.br-automation.com/iat2015/layoutDefinition/v2")
