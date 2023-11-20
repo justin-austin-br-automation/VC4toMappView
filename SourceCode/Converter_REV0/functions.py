@@ -11,6 +11,9 @@ def getInfoFromVC4Page(path):
     # Create the pageData dictionary
     pageData = {}
 
+    # Get the page name
+    pageData['PageName'] = root.get('Name')
+
     # Fill up the page data dictionary with property attribs that are
     # children of the Page tag
     for property in root.findall(namespace + 'Property'):
