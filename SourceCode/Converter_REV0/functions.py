@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 import xml.etree.ElementTree as ET
+import numpy
 ET.register_namespace('', "http://br-automation.co.at/AS/Package")
 
 def getInfoFromVC4Page(path):
@@ -25,7 +26,7 @@ def getInfoFromVC4Page(path):
     # Create the controlsElements dictionary.
     # It will be a nested dictionary. You can access it with the format:
     # controlsElements['elementName']['elementAttribute']
-    controlElements = {}
+    components = {}
 
     controlIndex = 0
     for control in root.iter(namespace + 'Control'):
@@ -34,44 +35,46 @@ def getInfoFromVC4Page(path):
         name = control.get('Name')
 
         # create a new dictionary for each control element to hold the different attributes
-        controlElements[name] = {}
+        components[name] = {}
 
         # get the class id of the control element
-        controlElements[name]['ClassId'] = control.get('ClassId')
+        components[name]['ClassId'] = control.get('ClassId')
 
         # grab each control element and stick it in the dictionary
         for item in control:
-            controlElements[name][item.get('Name')] = item.get('Value')
+            components[name][item.get('Name')] = item.get('Value')
 
         # This is kind of dumb. The text of the 'widget' itself is not included with
         # the rest of the 'widget' info. Instead, you have to reference the TextLayer tags
         # under the TextGroup tag.
         # I'm assuming order of the text matches the order of the Control elements.
         # Otherwise, we can grab the text index or text index offset from the control element.
-        controlElements[name]['text'] = {}
+        components[name]['text'] = {}
         for textLayer in root.iter(namespace + 'TextLayer'):
-            controlElements[name]['text'][textLayer.get('LanguageId')] = textLayer[controlIndex].get('Value')
+            components[name]['text'][textLayer.get('LanguageId')] = textLayer[controlIndex].get('Value')
 
         controlIndex += 1
 
         # Don't love this code. We need to extract the virtual key class id and tie it with the
         # working component. So I am gathering the VirtualKey embedded reference from the control element,
         # then parsing the page file for the matching Virtual Key
-        if 'VirtualKey' in controlElements[name]:
+        if 'VirtualKey' in components[name]:
 
             # extract the virtual key name
             # e.g. Source[local].VirtualKey[%embVirtualKey_2] => %embVirtualKey_2
-            VirtualKey = controlElements[name]['VirtualKey']
+            VirtualKey = components[name]['VirtualKey']
             parsedVirtualKey = str(VirtualKey).split("VirtualKey", 1)[1][1:-1]
-            controlElements[name]['ParsedVirtualKey'] = parsedVirtualKey
+            components[name]['ParsedVirtualKey'] = parsedVirtualKey
     
             for virtualKey in root.iter(namespace + 'VirtualKey'):
-                if virtualKey.get('Name') == controlElements[name]['ParsedVirtualKey']:
+                if virtualKey.get('Name') == components[name]['ParsedVirtualKey']:
                     for keyAction in virtualKey.iter(namespace + 'KeyAction'):
-                        controlElements[name]['KeyId'] = keyAction.get('ClassId')
+                        components[name]['KeyId'] = keyAction.get('ClassId')
+        else:   # if there is no virtual key for the element, add one with a value of 0 for lookup purposes
+            components[name]['KeyId'] = 0
 
     
-    return (pageData, controlElements)
+    return (pageData, components)
 
 
 # A function that makes a package file (.pkg) by reading the name of its
