@@ -27,18 +27,6 @@ class VC4Page:
                                                 "height": "Height",
                                                 "zIndex": "",
                                                 "text": "text"}}
-        # print(self.translationDict)
-        # print(self.translationDict['0x00001002']['0x0000016B'])
-        # print(self.components['Label'])
-        # print()
-        # print(self.components['MomentaryPushButton'])
-        # for item in self.components:
-        #     component = self.components[item]
-        #     for at in component:
-        #         if component[at] != '':
-        #             print(at + ": ")
-        #             print(component[at])
-        #     print()
 
     def createMVLayout(self):
         ET.register_namespace('ldef', "http://www.br-automation.com/iat2015/layoutDefinition/v2")
@@ -82,7 +70,7 @@ class VC4Page:
             # print(widget)
             component = self.components[componentName]
             widgetType = self.translationDict[component['ClassId']][str(component['KeyId'])]
-            self.insertWidget(self.attribTranslationDict[widgetType], componentName, root, i)
+            self.insertWidget(widgetType, self.attribTranslationDict[widgetType], componentName, root, i)
             i = i + 1
 
         root.set('xmlns:xsi', "http://www.w3.org/2001/XMLSchema-instance")
@@ -104,11 +92,11 @@ class VC4Page:
         with open(self.mVContentID + '.content', 'w') as file:
             file.write(filedata)
 
-    def insertWidget(self, widgetTranslation, componentName, content, i):
+    def insertWidget(self, widgetType, widgetTranslation, componentName, content, i):
         component = self.components[componentName]
 
         widget = ET.SubElement(content[0], 'Widget')
-        widget.set('xsi:type', "widgets.brease." + componentName)
+        widget.set('xsi:type', "widgets.brease." + widgetType)
         widget.set('id', componentName)
         for attribName in widgetTranslation:
             if attribName == "text":
