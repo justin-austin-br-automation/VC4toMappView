@@ -49,7 +49,9 @@ def getInfoFromVC4Page(path):
         for textLayer in root.iter(namespace + 'TextLayer'):
             controlElements[name]['text'][textLayer.get('LanguageId')] = textLayer[controlIndex].get('Value')
 
+        controlElements[name]['zIndex'] = controlIndex
         controlIndex += 1
+
 
         # Don't love this code. We need to extract the virtual key class id and tie it with the
         # working component. So I am gathering the VirtualKey embedded reference from the control element,
