@@ -53,7 +53,7 @@ def getInfoFromVC4Page(path):
         for textLayer in root.iter(namespace + 'TextLayer'):
             components[name]['text'][textLayer.get('LanguageId')] = textLayer[controlIndex].get('Value')
 
-        controlElements[name]['zIndex'] = controlIndex
+        components[name]['zIndex'] = controlIndex
         controlIndex += 1
 
 

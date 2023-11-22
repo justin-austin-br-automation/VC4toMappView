@@ -13,21 +13,24 @@ class VC4Page:
         self.mVLayoutID = self.pageData['PageName'] + "Layout"
         self.mVContentID = self.pageData['PageName'] + "Content"
         self.mVPageID = self.pageData['PageName'] + "Page"
-        self.translationDict = {"0x00001004": {"0": "Label"},
+
+        # manually creating lookup table and widget translation dictionary
+        self.lookupTable = {"0x00001004": {"0": "Label"},
                                 "0x00001002": {"0x0000016B": "MomentaryPushButton"}}
-        self.attribTranslationDict = {"Label": {"top": "Top",
+        self.widgetTranslations = {"Label": {"top": "Top",
                                                 "left": "Left",
                                                 "width": "Width",
                                                 "height": "Height",
-                                                "zIndex": "",
+                                                "zIndex": "zIndex",
                                                 "text": "text"},
                                       "MomentaryPushButton": {"top": "Top",
                                                 "left": "Left",
                                                 "width": "Width",
                                                 "height": "Height",
-                                                "zIndex": "",
+                                                "zIndex": "zIndex",
                                                 "text": "text"}}
 
+    # creates a mappView layout from VC4 data
     def createMVLayout(self):
         ET.register_namespace('ldef', "http://www.br-automation.com/iat2015/layoutDefinition/v2")
         
@@ -48,6 +51,7 @@ class VC4Page:
 
         tree.write(self.mVLayoutID + '.layout', xml_declaration=True, encoding='utf-8')
 
+    # creates a mappView content file from VC4 data
     def createMVContent(self):
         ET.register_namespace('', "http://www.br-automation.com/iat2015/contentDefinition/v2")
         ET.register_namespace('pdef', "http://www.br-automation.com/iat2015/pageDefinition/v2")
@@ -64,20 +68,13 @@ class VC4Page:
         root.set('id', self.mVContentID)
 
         # add in any widgets
-        i = 0
         for componentName in self.components:
-            # print(self.translationDict[self.components[widget]['ClassId']][str(self.components[widget]['KeyId'])])
-            # print(widget)
             component = self.components[componentName]
-            widgetType = self.translationDict[component['ClassId']][str(component['KeyId'])]
-            self.insertWidget(widgetType, self.attribTranslationDict[widgetType], componentName, root, i)
-            i = i + 1
+            widgetType = self.lookupTable[component['ClassId']][str(component['KeyId'])]
+            self.insertWidget(widgetType, self.widgetTranslations[widgetType], componentName, root)
 
         root.set('xmlns:xsi', "http://www.w3.org/2001/XMLSchema-instance")
 
-        print(root)
-        print()
-        print(tree)
         tree.write(self.mVContentID + '.content', xml_declaration=True, encoding='utf-8')
 
         # editing output file to be usable by AS
@@ -92,22 +89,24 @@ class VC4Page:
         with open(self.mVContentID + '.content', 'w') as file:
             file.write(filedata)
 
-    def insertWidget(self, widgetType, widgetTranslation, componentName, content, i):
+    # uses a translation dictionary to generate and insert a mappView widget
+    def insertWidget(self, widgetType, widgetTranslation, componentName, content):
+        # get component dictionary
         component = self.components[componentName]
 
+        # create widget in the content xml tree and add necessary attributes
         widget = ET.SubElement(content[0], 'Widget')
         widget.set('xsi:type', "widgets.brease." + widgetType)
         widget.set('id', componentName)
         for attribName in widgetTranslation:
             if attribName == "text":
                 widget.set(attribName, component['text']['en'])
-            elif attribName == "zIndex":
-                widget.set(attribName, str(i))
             else:
                 attrib = widgetTranslation[attribName]
-                temp = component[attrib]
-                widget.set(attribName, temp)
+                attribValue = component[attrib]
+                widget.set(attribName, attribValue)
 
+    # creates a mappView page from VC4 data
     def createMVPage(self):
         # grab the tree from the xml doc
         tree = ET.parse('TemplatePage.page')
