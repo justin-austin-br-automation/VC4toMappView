@@ -5,7 +5,6 @@ from functions import *
 class VC4Page:
 
     def __init__(self, path):
-        
         self.path = path
         self.pageData, self.components = getInfoFromVC4Page(self.path)
         self.mVLayoutID = self.pageData['PageName'] + "Layout"
@@ -77,6 +76,11 @@ class VC4Page:
 
         root.set('xmlns:xsi', "http://www.w3.org/2001/XMLSchema-instance")
 
+        # add content to vis xml tree
+        page = ET.SubElement(self.visRoot[6], 'Content')
+        page.set('refId', self.mVContentID)
+
+        # navigate to proper directory and create file
         path = path + '\Pages\\' + self.mVPageID
         if not os.path.exists(path):
             os.makedirs(path)
@@ -127,9 +131,48 @@ class VC4Page:
         root.set('id', self.mVPageID)
         root.set('layoutRefId', self.mVLayoutID)
 
+        # add page to vis xml tree
+        page = ET.SubElement(self.visRoot[1], 'Page')
+        page.set('refId', self.mVPageID)
+
+        # make page the start page if there isn't a start page
+        if self.visRoot[0].get('pageRefId') == '':
+            self.visRoot[0].set('pageRefId', self.mVPageID)
+
         # set all Assignment values
         root[0][0].set('baseContentRefId', self.mVContentID)
 
         path = path + '\Pages\\' + self.mVPageID
         os.chdir(path)
         tree.write(self.mVPageID + '.page', xml_declaration=True, encoding='utf-8')
+
+    # creates an xml tree from a template vis file
+    def startVisFile(self, path):
+        os.chdir(path)
+        ET.register_namespace('vdef', "http://www.br-automation.com/iat2015/visualizationDefinition/v2")
+        
+        self.visTree = ET.parse('Visualizat.vis')
+        self.visRoot = self.visTree.getroot()
+
+    # generates a vis file from the xml tree
+    def genVisFile(self, path):
+        os.chdir(path)
+        ET.register_namespace('vdef', "http://www.br-automation.com/iat2015/visualizationDefinition/v2")
+
+        # delete old vis file if it exists
+        for child in path.iterdir():
+            if child.name == "Visualizat.vis":
+                child.unlink()
+
+        self.visTree.write('Visualizat.vis', xml_declaration=True, encoding="utf-8")
+
+        textToFind = "/><"
+        textToReplaceWith = "/>\n<"
+
+        with open('Visualizat.vis', 'r') as file:
+            filedata = file.read()
+
+        filedata = filedata.replace(textToFind, textToReplaceWith)
+
+        with open('Visualizat.vis', 'w') as file:
+            file.write(filedata)
