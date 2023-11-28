@@ -5,8 +5,7 @@ if __name__ == "__main__":
     path = 'C:\projects\\4.11\mappViewTest\mappViewTest\Logical\Visu\Pages\PageEmpty.page'
     page = VC4Page(path)
 
-    path = Path("C:\projects\\4.11\VC4toMappView\SourceCode\Converter_REV0")
-    page.startVisFile(path)
+    page.startVisFile()
 
     path = "C:\projects\\4.11\mappViewTest\mappViewTest\Logical\mappView\Visualization"
     page.createMVLayout(path)

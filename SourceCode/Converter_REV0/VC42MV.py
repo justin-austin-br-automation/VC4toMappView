@@ -147,8 +147,8 @@ class VC4Page:
         tree.write(self.mVPageID + '.page', xml_declaration=True, encoding='utf-8')
 
     # creates an xml tree from a template vis file
-    def startVisFile(self, path):
-        os.chdir(path)
+    def startVisFile(self):
+        os.chdir(os.path.dirname(__file__))
         ET.register_namespace('vdef', "http://www.br-automation.com/iat2015/visualizationDefinition/v2")
         
         self.visTree = ET.parse('Visualizat.vis')
