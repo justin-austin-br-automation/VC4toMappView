@@ -1,4 +1,3 @@
-# C:\VC4toMappView\VC4toMappView\Logical\VisuVC4\Pages\PageEmpty.page
 from functions import *
 
 
@@ -11,21 +10,22 @@ class VC4Page:
         self.mVContentID = self.pageData['PageName'] + "Content"
         self.mVPageID = self.pageData['PageName'] + "Page"
 
-        # manually creating lookup table and widget translation dictionary (this will be changed later)
-        self.lookupTable = {"0x00001004": {"0": "Label"},
-                                "0x00001002": {"0x0000016B": "MomentaryPushButton"}}
-        self.widgetTranslations = {"Label": {"top": "Top",
-                                                "left": "Left",
-                                                "width": "Width",
-                                                "height": "Height",
-                                                "zIndex": "zIndex",
-                                                "text": "text"},
-                                      "MomentaryPushButton": {"top": "Top",
-                                                "left": "Left",
-                                                "width": "Width",
-                                                "height": "Height",
-                                                "zIndex": "zIndex",
-                                                "text": "text"}}
+        # creating lookup table and widget translation dictionary from text files
+        os.chdir(os.path.dirname(__file__))
+        self.lookupTable = {}
+        with open("lookupTable.txt") as f:
+            for line in f:
+                self.lookupTable[line.split()[0]] = line.split()[1]
+        
+        self.widgetTranslations = {}
+        temp = {}
+        with open("widgetTranslations.txt") as f:
+            for line in f:
+                if len(line.split()) == 2:
+                    temp[line.split()[0]] = line.split()[1]
+                elif len(line.split()) == 1:
+                    self.widgetTranslations[line.split()[0]] = temp
+                    temp = {}
 
     # creates a mappView layout from VC4 data
     def createMVLayout(self, path):
@@ -71,7 +71,7 @@ class VC4Page:
         # add in any widgets
         for componentName in self.components:
             component = self.components[componentName]
-            widgetType = self.lookupTable[component['ClassId']][str(component['KeyId'])]
+            widgetType = self.lookupTable[component['ClassId'] + str(component['KeyId'])] 
             self.insertWidget(widgetType, self.widgetTranslations[widgetType], componentName, root)
 
         root.set('xmlns:xsi', "http://www.w3.org/2001/XMLSchema-instance")
