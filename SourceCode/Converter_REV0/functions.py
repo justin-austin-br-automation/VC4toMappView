@@ -56,6 +56,12 @@ def getInfoFromVC4Page(path):
         components[name]['zIndex'] = controlIndex
         controlIndex += 1
 
+        # Dealing with default values from VC4 that won't populate in the xml unless they are changed
+        if not "AlignmentHorizontal" in components[name]:
+            components[name]["AlignmentHorizontal"] = "Left"
+        if not "AlignmentVertical" in components[name]:
+            components[name]["AlignmentVertical"] = "Center"
+
 
         # Don't love this code. We need to extract the virtual key class id and tie it with the
         # working component. So I am gathering the VirtualKey embedded reference from the control element,

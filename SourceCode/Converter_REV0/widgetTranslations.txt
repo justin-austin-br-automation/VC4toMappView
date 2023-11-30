@@ -11,4 +11,5 @@ width Width
 height Height
 zIndex zIndex
 text text
+textAlign AlignmentHorizontal
 MomentaryPushButton

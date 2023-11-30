@@ -111,6 +111,10 @@ class VC4Page:
         for attribName in widgetTranslation:
             if attribName == "text":
                 widget.set(attribName, component['text']['en'])
+            elif attribName == "textAlign":
+                attrib = widgetTranslation[attribName]
+                attribValue = component[attrib]
+                widget.set(attribName, attribValue.casefold())
             else:
                 attrib = widgetTranslation[attribName]
                 attribValue = component[attrib]
