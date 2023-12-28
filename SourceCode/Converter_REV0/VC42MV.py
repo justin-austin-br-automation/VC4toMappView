@@ -10,9 +10,11 @@ class VC4Page:
         self.mVContentID = self.pageData['PageName'] + "Content"
         self.mVPageID = self.pageData['PageName'] + "Page"
 
-        # creating lookup table and widget translation dictionary from text files
+        #### creating lookup table and widget translation dictionary from text files ###
         os.chdir(os.path.dirname(__file__))
         self.lookupTable = {}
+
+        # open lookupTable.txt file
         with open("lookupTable.txt") as f:
             for line in f:
                 self.lookupTable[line.split()[0]] = line.split()[1]
@@ -27,7 +29,7 @@ class VC4Page:
                     self.widgetTranslations[line.split()[0]] = temp
                     temp = {}
 
-    # creates a mappView layout from VC4 data
+    #### creates a mappView layout from VC4 data
     def createMVLayout(self, path):
         ET.register_namespace('ldef', "http://www.br-automation.com/iat2015/layoutDefinition/v2")
         
@@ -51,7 +53,7 @@ class VC4Page:
         os.chdir(path)
         tree.write(self.mVLayoutID + '.layout', xml_declaration=True, encoding='utf-8')
 
-    # creates a mappView content file from VC4 data
+    #### creates a mappView content file from VC4 data
     def createMVContent(self, path):
         ET.register_namespace('', "http://www.br-automation.com/iat2015/contentDefinition/v2")
         ET.register_namespace('xsi', "http://www.w3.org/2001/XMLSchema-instance")
@@ -99,7 +101,7 @@ class VC4Page:
         with open(self.mVContentID + '.content', 'w') as file:
             file.write(filedata)
 
-    # uses a translation dictionary to generate and insert a mappView widget
+    #### uses a translation dictionary to generate and insert a mappView widget
     def insertWidget(self, widgetType, widgetTranslation, componentName, content):
         # get component dictionary
         component = self.components[componentName]
@@ -120,7 +122,7 @@ class VC4Page:
                 attribValue = component[attrib]
                 widget.set(attribName, str(attribValue))
 
-    # creates a mappView page from VC4 data
+    #### creates a mappView page from VC4 data
     def createMVPage(self, path):
         ET.register_namespace('pdef', 'http://www.br-automation.com/iat2015/pageDefinition/v2')
 
@@ -150,7 +152,7 @@ class VC4Page:
         os.chdir(path)
         tree.write(self.mVPageID + '.page', xml_declaration=True, encoding='utf-8')
 
-    # creates an xml tree from a template vis file
+    #### creates an xml tree from a template vis file
     def startVisFile(self):
         os.chdir(os.path.dirname(__file__))
         ET.register_namespace('vdef', "http://www.br-automation.com/iat2015/visualizationDefinition/v2")
@@ -158,7 +160,7 @@ class VC4Page:
         self.visTree = ET.parse('Visualizat.vis')
         self.visRoot = self.visTree.getroot()
 
-    # generates a vis file from the xml tree
+    #### generates a vis file from the xml tree
     def genVisFile(self, path):
         os.chdir(path)
         ET.register_namespace('vdef', "http://www.br-automation.com/iat2015/visualizationDefinition/v2")

@@ -1,2 +1,3 @@
 0x000010040 Label
 0x000010020x0000016B MomentaryPushButton
+0x000010020x0000016A ToggleButton
