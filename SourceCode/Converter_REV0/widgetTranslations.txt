@@ -12,3 +12,10 @@ height Height
 zIndex zIndex
 text text
 MomentaryPushButton
+top Top
+left Left
+width Width
+height Height
+zIndex zIndex
+text text
+ToggleButton
