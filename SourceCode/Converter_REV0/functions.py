@@ -2,7 +2,45 @@ import os
 from pathlib import Path
 import xml.etree.ElementTree as ET
 import numpy
+import tkinter
 ET.register_namespace('', "http://br-automation.co.at/AS/Package")
+
+
+# A Function to find the MV Vis and VC4 Visu Folders within a Given AS Project
+def VisFinder(ProjectPath, Vc4Path, MvPath):
+
+    # Function to save the User input from popup
+    def CommandSubmit():
+        ProjectPath = UserEntry.get()
+        print(ProjectPath)
+
+    #Create the popup window for user submission of path
+    window = tkinter.Tk()
+
+    HeaderLabel = tkinter.Label(window, text='Input Filepath to Target Automation Studio Project:')
+    HeaderLabel.config(font=('TkHeadingFont',15))
+    HeaderLabel.pack(side = 'top')
+
+    UserEntry = tkinter.Entry()
+    UserEntry.config(font=('TkTextFont',15))
+    UserEntry.insert(0,'E.G: C:\projects\VC4toMappView')
+    UserEntry.config(width=30)
+    UserEntry.pack()
+
+
+    submit = tkinter.Button(window, text='Submit', command=CommandSubmit,height=2, width=15)
+    submit.pack(side='bottom')
+
+    window.mainloop()
+
+    Vc4Path = 1
+    MvPath = 2
+
+
+        
+
+
+
 
 def getInfoFromVC4Page(path):
 
@@ -155,3 +193,6 @@ def PackageItemAdder(Path, PackageXml):
             # in any folders found
             PackageCreator(child)
             os.chdir(Path)
+
+
+
