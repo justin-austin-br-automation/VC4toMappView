@@ -1,4 +1,5 @@
 from functions import *
+import csv
 
 
 class VC4Page:
@@ -29,6 +30,31 @@ class VC4Page:
                     self.widgetTranslations[line.split()[0]] = temp
                     temp = {}
 
+        
+
+        print(self.lookupTable)
+        print(self.widgetTranslations)
+        mydict = {}
+        with open('AttributeLookupTable.csv', mode='r') as csvfile:
+            reader = csv.DictReader(csvfile)
+            for row in reader:
+                #print(row.keys())
+                #print(list((row.keys()))[0])
+                type = list((row.keys()))[0]
+                vc4ViewAttrib = list((row.keys()))[1]
+                mappViewAttrib = list((row.keys()))[2]
+                
+                #print(row[type])
+                if row[type] not in mydict:
+                    mydict[row[type]] = {}
+                
+                mydict[row[type]][row[mappViewAttrib]] = row[vc4ViewAttrib]
+
+                #mydict = {row[type] : 'moe'}
+
+        #print(mydict)
+        self.widgetTranslations = mydict
+        print(self.widgetTranslations)
     #### creates a mappView layout from VC4 data
     def createMVLayout(self, path):
         ET.register_namespace('ldef', "http://www.br-automation.com/iat2015/layoutDefinition/v2")

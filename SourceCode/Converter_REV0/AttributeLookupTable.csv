@@ -1,0 +1,14 @@
+WidgetType,VC4Attrib,MappViewAttrib
+Label,Top,top
+Label,Left,left
+Label,Width,width
+Label,Height,height
+Label,zIndex,zIndex
+Label,text,text
+MomentaryPushButton,Top,top
+MomentaryPushButton,Left,left
+MomentaryPushButton,Width,width
+MomentaryPushButton,Height,height
+MomentaryPushButton,zIndex,zIndex
+MomentaryPushButton,text,text
+MomentaryPushButton,AlignmentHorizontal,textAlign
