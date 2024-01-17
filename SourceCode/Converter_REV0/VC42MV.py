@@ -13,48 +13,42 @@ class VC4Page:
 
         #### creating lookup table and widget translation dictionary from text files ###
         os.chdir(os.path.dirname(__file__))
+
+        # Look through the Widget Lookup Table and create a dictionary
         self.lookupTable = {}
+        tempDict = {}
+        with open('WidgetLookupTable.csv', mode='r') as csvfile:
+            reader = csv.DictReader(csvfile)
+            for row in reader:
+                ComponentClassId = list((row.keys()))[0]
+                KeyValueClassId = list((row.keys()))[1]
+                Widget = list((row.keys()))[2]
 
-        # open lookupTable.txt file
-        with open("lookupTable.txt") as f:
-            for line in f:
-                self.lookupTable[line.split()[0]] = line.split()[1]
-        
+                if row[ComponentClassId] not in tempDict:
+                    tempDict[row[ComponentClassId]] = {}
+
+                tempDict[row[ComponentClassId]][row[KeyValueClassId]] = row[Widget]
+  
+        self.lookupTable = tempDict
+
+
+        # Look through the Attribute Lookup Table and create a dictionary
         self.widgetTranslations = {}
-        temp = {}
-        with open("widgetTranslations.txt") as f:
-            for line in f:
-                if len(line.split()) == 2:
-                    temp[line.split()[0]] = line.split()[1]
-                elif len(line.split()) == 1:
-                    self.widgetTranslations[line.split()[0]] = temp
-                    temp = {}
-
-        
-
-        print(self.lookupTable)
-        print(self.widgetTranslations)
-        mydict = {}
+        tempDict = {}
         with open('AttributeLookupTable.csv', mode='r') as csvfile:
             reader = csv.DictReader(csvfile)
             for row in reader:
-                #print(row.keys())
-                #print(list((row.keys()))[0])
                 type = list((row.keys()))[0]
                 vc4ViewAttrib = list((row.keys()))[1]
                 mappViewAttrib = list((row.keys()))[2]
                 
-                #print(row[type])
-                if row[type] not in mydict:
-                    mydict[row[type]] = {}
+                if row[type] not in tempDict:
+                    tempDict[row[type]] = {}
                 
-                mydict[row[type]][row[mappViewAttrib]] = row[vc4ViewAttrib]
+                tempDict[row[type]][row[mappViewAttrib]] = row[vc4ViewAttrib]
 
-                #mydict = {row[type] : 'moe'}
+        self.widgetTranslations = tempDict
 
-        #print(mydict)
-        self.widgetTranslations = mydict
-        print(self.widgetTranslations)
     #### creates a mappView layout from VC4 data
     def createMVLayout(self, path):
         ET.register_namespace('ldef', "http://www.br-automation.com/iat2015/layoutDefinition/v2")
@@ -99,7 +93,7 @@ class VC4Page:
         # add in any widgets
         for componentName in self.components:
             component = self.components[componentName]
-            widgetType = self.lookupTable[component['ClassId'] + str(component['KeyId'])] 
+            widgetType = self.lookupTable[component['ClassId']][str(component['KeyId'])]
             self.insertWidget(widgetType, self.widgetTranslations[widgetType], componentName, root)
 
         root.set('xmlns:xsi', "http://www.w3.org/2001/XMLSchema-instance")
