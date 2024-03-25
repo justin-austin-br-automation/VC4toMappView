@@ -12,3 +12,9 @@ MomentaryPushButton,Height,height
 MomentaryPushButton,zIndex,zIndex
 MomentaryPushButton,text,text
 MomentaryPushButton,AlignmentHorizontal,textAlign
+ToggleButton,Top,top
+ToggleButton,Left,left
+ToggleButton,Width,width
+ToggleButton,Height,height
+ToggleButton,zIndex,zIndex
+ToggleButton,text,text

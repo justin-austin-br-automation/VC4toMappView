@@ -3,5 +3,6 @@
   <Widgets>
     <Widget xsi:type="widgets.brease.Label" id="Label" top="20" left="140" zIndex="0" text="Label" />
     <Widget xsi:type="widgets.brease.MomentaryPushButton" id="MomentaryPushButton" top="20" left="20" zIndex="1" text="Button" />
+    <Widget xsi:type="widgets.brease.ToggleButton" id="ToggleButton1" top="120" left="290" zIndex="2" text="ToggleButton1" />
   </Widgets>
 </Content>
